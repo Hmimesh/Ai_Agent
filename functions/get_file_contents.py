@@ -1,5 +1,6 @@
 import os
 from config import MAX_CHARS
+from google.genai import types
 
 #This is func is for getting the content from the files in the scope of the agent
 def get_file_contents(working_directory, file_path):
@@ -20,4 +21,20 @@ def get_file_contents(working_directory, file_path):
             return content
     except Exception as e:
         return f"Error: {e}"
+
+
+schema_get_files_content = types.FunctionDeclaration(
+     name="get_file_content",
+     description="read the content in the specified file, in the file path",
+     parameters=types.Schema(
+          required=["file_path"],
+          type=types.Type.OBJECT,
+          properties={
+               "file_path": types.Schema(
+                    type=types.Type.STRING,
+                    description="Path to the file to read, relative to the working directory.",
+               ),
+          },
+     ),
+)
     

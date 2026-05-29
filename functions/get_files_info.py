@@ -1,4 +1,7 @@
 import os
+from google.genai import types
+
+
 # This func is for getting the files in scope for the agent to work with
 def get_files_info(working_directory, directory="."):
     working_directory_abs = os.path.abspath(working_directory)
@@ -15,10 +18,25 @@ def get_files_info(working_directory, directory="."):
         result = []
         for file in files:
             file_path = os.path.join(target_dir, file)
-            dir = os.path.isdir(file_path)
+            is_dir = os.path.isdir(file_path)
             size = os.path.getsize(file_path)
-            line = f'- {file}: file_size={size} bytes, is_dir={dir}'
+            line = f'- {file}: file_size={size} bytes, is_dir={is_dir}'
             result.append(line)
     except Exception as e:
         return f"Error: {e}"
     return "\n".join(result)
+
+
+schema_get_files_info = types.FunctionDeclaration(
+     name="get_files_info",
+     description="List files in a specified directory relative to the working directory, providing file size and directory status",
+     parameters=types.Schema(
+          type=types.Type.OBJECT,
+          properties={
+               "directory": types.Schema(
+                    type=types.Type.STRING,
+                    description="Directory path to list files from, relative to working directory (default is the working directory itself)",
+               ),
+          },
+     ),
+)
